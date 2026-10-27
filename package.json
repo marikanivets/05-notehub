@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "node node_modules/typescript/bin/tsc && vite build",
-    "preview": "vite preview"
-  },
+  "dev": "vite",
+  "build": "npx tsc && npx vite build",
+  "preview": "vite preview"
+},
   "description": "",
   "main": "index.js",
   "repository": {
