@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
-import { fetchNotes, createNote, deleteNote } from '../../services/noteService';
+import { fetchNotes } from '../../services/noteService';
 import SearchBox from '../SearchBox/SearchBox';
 import Pagination from '../Pagination/Pagination';
 import NoteList from '../NoteList/NoteList';
@@ -12,8 +12,6 @@ import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import css from './App.module.css';
 
 const App = () => {
-  const queryClient = useQueryClient();
-  
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -36,23 +34,8 @@ const App = () => {
     placeholderData: (previousData) => previousData,
   });
 
-  const createNoteMutation = useMutation({
-    mutationFn: createNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-      setIsModalOpen(false);
-    },
-  });
-
-  const deleteNoteMutation = useMutation({
-    mutationFn: deleteNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-    },
-  });
-
-  const totalNotes = data?.total || 0;
-  const pageCount = Math.ceil(totalNotes / perPage);
+  // Теперь количество страниц берем напрямую из data.totalPages согласно новому типу ответа API
+  const pageCount = data?.totalPages || 0;
 
   return (
     <div className={css.app}>
@@ -70,16 +53,14 @@ const App = () => {
         {isLoading && <Loader />}
         {isError && <ErrorMessage message="Error loading notes. Please verify your API key." />}
         
-        {(createNoteMutation.isPending || deleteNoteMutation.isPending) && <Loader />}
-        
         {data && !isLoading && (
-          <NoteList notes={data.data} onDeleteNote={(id) => deleteNoteMutation.mutate(id)} />
+          <NoteList notes={data.notes} />
         )}
       </main>
 
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
-          <NoteForm onSubmit={(values) => createNoteMutation.mutate(values)} onCancel={() => setIsModalOpen(false)} />
+          <NoteForm onCancel={() => setIsModalOpen(false)} />
         </Modal>
       )}
     </div>
