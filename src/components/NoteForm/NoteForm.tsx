@@ -14,8 +14,7 @@ const validationSchema = Yup.object().shape({
     .max(50, 'Maximum 50 characters')
     .required('Required field'),
   content: Yup.string()
-    .max(500, 'Maximum 500 characters')
-    .required('Required field'),
+    .max(500, 'Maximum 500 characters'), 
   tag: Yup.string()
     .oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'])
     .required('Required field'),
@@ -26,12 +25,11 @@ const initialValues: CreateNotePayload = { title: '', content: '', tag: 'Todo' }
 const NoteForm = ({ onCancel }: NoteFormProps) => {
   const queryClient = useQueryClient();
 
-  // Логика мутации перенесена внутрь компонента формы
   const mutation = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
-      onCancel(); // Закрываем модалку при успехе
+      onCancel();
     },
   });
 

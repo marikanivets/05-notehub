@@ -17,7 +17,7 @@ interface PaginationProps {
 
 const Pagination = ({ pageCount, forcePage, onPageChange }: PaginationProps) => {
   const handlePageClick = (selectedItem: { selected: number }) => {
-    onPageChange(selectedItem.selected + 1);
+    onPageChange(selectedItem.selected);
   };
 
   return (
@@ -29,7 +29,7 @@ const Pagination = ({ pageCount, forcePage, onPageChange }: PaginationProps) => 
       marginPagesDisplayed={2}
       pageRangeDisplayed={3}
       onPageChange={handlePageClick}
-      forcePage={forcePage - 1}
+      forcePage={forcePage}
       containerClassName={css.pagination}
       activeClassName={css.active}
     />

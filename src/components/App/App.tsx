@@ -14,13 +14,13 @@ import css from './App.module.css';
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(0); 
+  const [isModalOpen, setIsModalOpen] = useState(false); // Стейт восстановлен!
   const perPage = 12;
 
   const debouncedSearchHandler = useDebouncedCallback((value: string) => {
     setDebouncedSearch(value);
-    setPage(1); 
+    setPage(0); 
   }, 500);
 
   const handleSearchChange = (value: string) => {
@@ -30,11 +30,10 @@ const App = () => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['notes', { page, perPage, search: debouncedSearch }],
-    queryFn: () => fetchNotes({ page, perPage, search: debouncedSearch }),
+    queryFn: () => fetchNotes({ page: page + 1, perPage, search: debouncedSearch }),
     placeholderData: (previousData) => previousData,
   });
 
-  // Теперь количество страниц берем напрямую из data.totalPages согласно новому типу ответа API
   const pageCount = data?.totalPages || 0;
 
   return (
@@ -68,3 +67,4 @@ const App = () => {
 };
 
 export default App;
+
